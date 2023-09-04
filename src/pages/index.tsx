@@ -1,9 +1,32 @@
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
+import { getSession, signIn } from 'next-auth/react'
+import { useEffect, useState } from 'react'
+
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const securePage = async () => {
+      const session = await getSession()
+      console.log(session)
+      if (!session) {
+        signIn()
+      } else {
+        setLoading(false)
+      }
+    }
+    securePage()
+  }, [])
+
+  if (loading) {
+    return <h2>Loading...</h2>
+  }
+
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
